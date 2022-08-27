@@ -11,6 +11,8 @@ import (
 
 	"backend/internal/healthcheck"
 
+	"backend/internal/auth"
+
 	"github.com/gorilla/mux"
 )
 
@@ -36,8 +38,9 @@ func main() {
 
 	log.Println("Starting api server with", os.Getenv("MESSAGE"))
 	router := mux.NewRouter()
+	router.HandleFunc("/login", auth.LoginHandler).Methods("POST")
+	router.HandleFunc("/register", auth.RegisterHandler).Methods("POST")
 	router.HandleFunc("/health-check", healthcheck.Handler)
-
 	http.Handle("/", router)
 	http.ListenAndServe(":8080", router)
 
