@@ -90,35 +90,53 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 	found := "Garbage"
 	identified := "Garbage"
 
-	for _, s := range m.Responses[0].LocalizedObjectAnnotations {
-		name := strings.ToLower(s.Name)
-		blueExists := blueBinPossible[name]
-		if blueExists {
-			found = "blue"
-			identified = name
-			break
+	for index, obj := range m.Responses[0].LocalizedObjectAnnotations {
+		if index == 0 {
+			identified = obj.Name
 		}
-		redExists := redBinPossible[name]
-		if redExists {
-			found = "red"
-			identified = name
-			break
+
+		names := strings.Split(string(obj.Name), " ")
+
+		for _, s := range names {
+			name := strings.ToLower(s)
+			blueExists := blueBinPossible[name]
+			if blueExists {
+				found = "blue"
+				identified = name
+				break
+			}
+			redExists := redBinPossible[name]
+			if redExists {
+				found = "red"
+				identified = name
+				break
+			}
+
 		}
 	}
 
-	for _, s := range m.Responses[0].LabelAnnotations {
-		name := strings.ToLower(s.Description)
-		blueExists := blueBinPossible[name]
-		if blueExists {
-			found = "blue"
-			identified = name
-			break
+	for index, obj := range m.Responses[0].LabelAnnotations {
+		if index == 0 && identified == "Garbage" {
+			identified = obj.Description
 		}
-		redExists := redBinPossible[name]
-		if redExists {
-			found = "red"
-			identified = name
-			break
+
+		names := strings.Split(string(obj.Description), " ")
+
+		for _, s := range names {
+
+			name := strings.ToLower(s)
+			blueExists := blueBinPossible[name]
+			if blueExists {
+				found = "blue"
+				identified = name
+				break
+			}
+			redExists := redBinPossible[name]
+			if redExists {
+				found = "red"
+				identified = name
+				break
+			}
 		}
 	}
 
