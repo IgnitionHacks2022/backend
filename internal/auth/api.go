@@ -76,7 +76,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newUser := db.User{Email: rR.Email, BluetoothID: rR.BluetoothID, Password: string(hashed)}
+	newUser := db.User{Email: rR.Email, Name: rR.Name, BluetoothID: rR.BluetoothID, Password: string(hashed)}
 	userID, err := db.UserRegister(conn, &newUser)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
