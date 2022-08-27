@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 type ImageContent struct {
@@ -41,7 +42,7 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("json error")
 	}
 
-	resp, err := http.Post("https://vision.googleapis.com/v1/images:annotate", "application/json", bytes.NewBuffer(payload))
+	resp, err := http.Post(fmt.Sprintf("https://vision.googleapis.com/v1/images:annotate/%s", os.Getenv("API_KEY")), "application/json", bytes.NewBuffer(payload))
 
 	body, err := ioutil.ReadAll(resp.Body)
 
