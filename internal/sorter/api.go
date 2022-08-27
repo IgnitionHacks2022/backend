@@ -121,7 +121,14 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
+
+	audioMessage := fmt.Sprintf("%s has thrown away a %s. It will go into the %s bin.", "Zhehai", identified, found)
+	audio, err := textToAudio(audioMessage)
+	if err != nil {
+		http.Error(w, "Error generating audio message", http.StatusInternalServerError)
+	}
 	response.Type = found
+	response.Audio = audio
 
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
@@ -131,13 +138,13 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := db.Connection()
 	uID, err := db.GetUserId(conn, userId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		http.Error(w, "Invalid user id", http.StatusNotFound)
 		return
 	}
 	itemRecord := db.Item{UserID: uID, Type: found, Name: identified}
 	err = db.AddItem(conn, &itemRecord)
 	if err != nil {
-		http.Error(w, "Error adding item to db", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	fmt.Println(userId, identified)
