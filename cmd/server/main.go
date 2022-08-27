@@ -13,6 +13,8 @@ import (
 	"backend/internal/healthcheck"
 	"backend/internal/sorter"
 
+	"backend/internal/auth"
+
 	"github.com/gorilla/mux"
 )
 
@@ -41,6 +43,8 @@ func main() {
 
 	log.Println("Listening on port", os.Getenv("PORT"))
 	router := mux.NewRouter()
+	router.HandleFunc("/login", auth.LoginHandler).Methods("POST")
+	router.HandleFunc("/register", auth.RegisterHandler).Methods("POST")
 	router.HandleFunc("/health-check", healthcheck.Handler)
 	router.HandleFunc("/classify/{userId}", sorter.ClassifyHandler)
 
