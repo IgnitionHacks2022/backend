@@ -1,7 +1,6 @@
 tub
 lid
 container
-plate
 detergent
 shampoo
 bottle
