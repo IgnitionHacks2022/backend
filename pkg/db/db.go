@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"gorm.io/driver/postgres"
@@ -35,7 +34,6 @@ func Migrate(conn *gorm.DB) error {
 			&Item{},
 		)
 		if err != nil {
-			log.Fatal(err)
 			return err
 		}
 

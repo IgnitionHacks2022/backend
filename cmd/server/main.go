@@ -36,7 +36,7 @@ func main() {
 
 	err = db.Migrate(conn)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	log.Println("Listening on port", os.Getenv("PORT"))

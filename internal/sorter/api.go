@@ -75,7 +75,17 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 	var response entity.ClassifyResponse
 
 	blueBinPossible, err := getBlueBin()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println("Error reading blue bin file")
+		return
+	}
 	redBinPossible, err := getRedBin()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		fmt.Println("Error reading red bin file")
+		return
+	}
 
 	found := "Garbage"
 	identified := "Garbage"
@@ -119,15 +129,16 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	conn, err := db.Connection()
-	uId, err := db.GetUserId(conn, userId)
+	uID, err := db.GetUserId(conn, userId)
 	if err != nil {
-		fmt.Println(err)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	itemRecord := db.Item{UserID: uId, Type: found, Name: identified}
+	itemRecord := db.Item{UserID: uID, Type: found, Name: identified}
 	err = db.AddItem(conn, &itemRecord)
 	if err != nil {
-		fmt.Println(err)
+		http.Error(w, "Error adding item to db", http.StatusInternalServerError)
+		return
 	}
 	fmt.Println(userId, identified)
 
