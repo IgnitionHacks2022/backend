@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"backend/internal/healthcheck"
+	"backend/internal/sorter"
 
 	"github.com/gorilla/mux"
 )
@@ -37,6 +38,7 @@ func main() {
 	log.Println("Starting api server with", os.Getenv("MESSAGE"))
 	router := mux.NewRouter()
 	router.HandleFunc("/health-check", healthcheck.Handler)
+	router.HandleFunc("/classify/{userId}", sorter.ClassifyHandler)
 
 	http.Handle("/", router)
 	http.ListenAndServe(":8080", router)
