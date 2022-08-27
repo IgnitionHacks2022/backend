@@ -45,7 +45,7 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 	payload, err := json.Marshal(imagePayload)
 
 	if err != nil {
-		fmt.Println("json error")
+		http.Error(w, "Error marshaling json", http.StatusBadRequest)
 		return
 	}
 
@@ -55,7 +55,7 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(payload))
 	if err != nil {
-		fmt.Println(err)
+		http.Error(w, "Error calling google vision api", http.StatusBadRequest)
 		return
 	}
 
@@ -66,7 +66,7 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err = json.Unmarshal(body, &m); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error unpacking google response", http.StatusInternalServerError)
 		return
 	}
 
