@@ -121,7 +121,14 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
+
+	audioMessage := fmt.Sprintf("%s has thrown away a %s. It will go into the %s bin.", "Zhehai", identified, found)
+	audio, err := textToAudio(audioMessage)
+	if err != nil {
+		http.Error(w, "Error generating audio message", http.StatusInternalServerError)
+	}
 	response.Type = found
+	response.Audio = audio
 
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {

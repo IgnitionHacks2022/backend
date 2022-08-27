@@ -5,10 +5,12 @@ type Classify struct {
 }
 
 type ClassifyResponse struct {
-	Type string `json:"type"`
+	Type  string `json:"type"`
+	Audio string `json:"audio"`
 }
 
-// Response
+// GOOGLE VISION API
+// Request
 
 type ImageContent struct {
 	Content string `json:"content"`
@@ -50,4 +52,34 @@ type ResponseContent struct {
 
 type GoogleResponse struct {
 	Responses []ResponseContent `json:"responses"`
+}
+
+// GOOGLE Text to Speech API
+// Request
+
+type AudioConfig struct {
+	AudioEncoding string  `json:"audioEncoding"`
+	Pitch         float32 `json:"pitch"`
+	SpeakingRate  float32 `json:"speakingRate"`
+}
+
+type Voice struct {
+	Name         string `json:"name"`
+	LanguageCode string `json:"languageCode"`
+}
+
+type Input struct {
+	Text string `json:"text"`
+}
+
+type SpeechRequest struct {
+	AudioConfig AudioConfig `json:"audioConfig"`
+	Input       Input       `json:"input"`
+	Voice       Voice       `json:"voice"`
+}
+
+// Response
+
+type SpeechResponse struct {
+	AudioContent string `json:"audioContent"`
 }
