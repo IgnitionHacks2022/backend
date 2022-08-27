@@ -1,4 +1,5 @@
 .vscode
 *.test
 *.env
+config/ignitionhacks2022-b24e48cd6d35.json
 testdata/*

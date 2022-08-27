@@ -42,6 +42,32 @@ func Migrate(conn *gorm.DB) error {
 	})
 }
 
+func AddItem(conn *gorm.DB, item *Item) error {
+	err := conn.Create(item).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// returns user uid based on bluetooth id
+func GetUserId(conn *gorm.DB, bluetoothId string) (uint, error) {
+
+	user := User{}
+	err := conn.
+		Select("id").
+		Where("bluetooth_id = ?", bluetoothId).
+		First(&user).
+		Error
+	if err != nil {
+		return 0, err
+	}
+
+	return user.ID, nil
+}
+
+
 // returns user id on successful auth
 func UserCheckCreds(conn *gorm.DB, email string, password string) (uint, error) {
 

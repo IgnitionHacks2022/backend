@@ -1,0 +1,10 @@
+paper
+card
+newspaper
+flyer
+magazine
+book
+cardboard
+cereal
+carton
+roll

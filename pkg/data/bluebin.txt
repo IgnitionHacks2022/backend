@@ -1,0 +1,9 @@
+tub
+lid
+container
+plate
+detergent
+shampoo
+bottle
+bag
+can

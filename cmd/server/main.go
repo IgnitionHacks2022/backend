@@ -3,6 +3,7 @@ package main
 import (
 	db "backend/pkg/db"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"backend/internal/healthcheck"
+	"backend/internal/sorter"
 
 	"backend/internal/auth"
 
@@ -34,14 +36,19 @@ func main() {
 		log.Fatal("Failed to connect to DB")
 	}
 
-	db.Migrate(conn)
+	err = db.Migrate(conn)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	log.Println("Starting api server with", os.Getenv("MESSAGE"))
+	log.Println("Listening on port", os.Getenv("PORT"))
 	router := mux.NewRouter()
 	router.HandleFunc("/login", auth.LoginHandler).Methods("POST")
 	router.HandleFunc("/register", auth.RegisterHandler).Methods("POST")
 	router.HandleFunc("/health-check", healthcheck.Handler)
+	router.HandleFunc("/classify/{userId}", sorter.ClassifyHandler)
+
 	http.Handle("/", router)
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), router)
 
 }
