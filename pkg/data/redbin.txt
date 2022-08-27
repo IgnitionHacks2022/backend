@@ -8,3 +8,4 @@ cardboard
 cereal
 carton
 roll
+plate
