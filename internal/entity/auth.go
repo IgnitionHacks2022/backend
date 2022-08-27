@@ -7,6 +7,7 @@ type LoginRequest struct {
 
 type RegisterRequest struct {
 	Email       string
+	Name        string
 	Password    string
 	BluetoothID string
 }
