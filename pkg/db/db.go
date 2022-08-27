@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -59,6 +60,58 @@ func GetUserId(conn *gorm.DB, bluetoothId string) (uint, error) {
 		Where("bluetooth_id = ?", bluetoothId).
 		First(&user).
 		Error
+	if err != nil {
+		return 0, err
+	}
+
+	return user.ID, nil
+}
+
+
+// returns user id on successful auth
+func UserCheckCreds(conn *gorm.DB, email string, password string) (uint, error) {
+
+	loginUser := User{}
+	err := conn.
+		Select("id", "password").
+		Where("email = ?", email).
+		First(&loginUser).
+		Error
+	if err != nil {
+		return 0, err
+	}
+
+	// maybe move the bcrypt stuff into it's own function
+	err = bcrypt.CompareHashAndPassword([]byte(loginUser.Password), []byte(password))
+	if err != nil {
+		return 0, err
+	}
+
+	return loginUser.ID, nil
+}
+
+// check if username or email are already taken (true if not avaliable - possibly bad design)
+func UserCheckRegistered(conn *gorm.DB, email string) (bool, error) {
+
+	matches := []User{}
+	err := conn.
+		Where("email = ?", email).
+		Find(&matches).
+		Error
+	if err != nil {
+		return true, err
+	}
+
+	return len(matches) != 0, nil
+}
+
+/* a lot of these methods are very trivial - could just call db methods
+ * directly in the client code
+ */
+
+func UserRegister(conn *gorm.DB, user *User) (uint, error) {
+
+	err := conn.Create(user).Error
 	if err != nil {
 		return 0, err
 	}
