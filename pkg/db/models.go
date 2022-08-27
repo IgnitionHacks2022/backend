@@ -15,8 +15,9 @@ type User struct {
 
 type Item struct {
 	gorm.Model
-	User User      `gorm:"foreignKey:UserID;preload:false"`
-	Time time.Time `gorm:"not null"`
-	Type string    `gorm:"not null"`
-	Name string    `gorm:"not null"`
+	UserID uint      `gorm:"not null"`
+	User   User      `gorm:"foreignKey:UserID;preload:false"`
+	Time   time.Time `gorm:"not null"`
+	Type   string    `gorm:"not null"`
+	Name   string    `gorm:"not null"`
 }
