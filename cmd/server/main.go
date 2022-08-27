@@ -1,6 +1,7 @@
 package main
 
 import (
+	db "backend/pkg/db"
 	"flag"
 	"log"
 	"net/http"
@@ -24,6 +25,14 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to load config file")
 	}
+
+	conn, err := db.Connection()
+
+	if err != nil {
+		log.Fatal("Failed to connect to DB")
+	}
+
+	db.Migrate(conn)
 
 	log.Println("Starting api server with", os.Getenv("MESSAGE"))
 	router := mux.NewRouter()
