@@ -2,6 +2,7 @@ package sorter
 
 import (
 	"backend/internal/entity"
+	"backend/pkg/db"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -15,15 +16,13 @@ import (
 
 func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	fmt.Println(vars["userId"])
+	userId := vars["userId"]
 	var requestBody entity.Classify
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	fmt.Println("Done decoding request body")
 
 	imagePayload := entity.GoogleRequest{
 		Requests: []entity.ImageType{
@@ -49,7 +48,6 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("json error")
 		return
 	}
-	fmt.Println("Done making request body")
 
 	url := fmt.Sprintf("https://vision.googleapis.com/v1/images:annotate?key=%s", os.Getenv("API_KEY"))
 
@@ -80,17 +78,20 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 	redBinPossible, err := getRedBin()
 
 	found := "Garbage"
+	identified := "Garbage"
 
 	for _, s := range m.Responses[0].LocalizedObjectAnnotations {
 		name := strings.ToLower(s.Name)
 		blueExists := blueBinPossible[name]
 		if blueExists {
 			found = "blue"
+			identified = name
 			break
 		}
 		redExists := redBinPossible[name]
 		if redExists {
 			found = "red"
+			identified = name
 			break
 		}
 	}
@@ -100,11 +101,13 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 		blueExists := blueBinPossible[name]
 		if blueExists {
 			found = "blue"
+			identified = name
 			break
 		}
 		redExists := redBinPossible[name]
 		if redExists {
 			found = "red"
+			identified = name
 			break
 		}
 	}
@@ -114,6 +117,19 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+
+	conn, err := db.Connection()
+	uId, err := db.GetUserId(conn, userId)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	itemRecord := db.Item{UserID: uId, Type: found, Name: identified}
+	err = db.AddItem(conn, &itemRecord)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(userId, identified)
 
 	w.Write(jsonResponse)
 }
