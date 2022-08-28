@@ -137,13 +137,17 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := "You"
-	if requestBody.BluetoothID != "None" {
-		conn, err := db.Connection()
-		uID, err := db.GetUserId(conn, requestBody.BluetoothID)
-		if err != nil {
-			http.Error(w, "Invalid user id", http.StatusNotFound)
-			return
+	bluetoothID := "None"
+	uID := uint(0)
+	conn, err := db.Connection()
+	for _, s := range requestBody.BluetoothID {
+		uID, err = db.GetUserId(conn, s)
+		if err == nil {
+			bluetoothID = s
+			break
 		}
+	}
+	if bluetoothID != "None" {
 		name = db.GetUserName(conn, uID)
 		itemRecord := db.Item{UserID: uID, Type: found, Name: identified}
 		err = db.AddItem(conn, &itemRecord)
@@ -153,7 +157,6 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println(requestBody.BluetoothID, identified)
 	}
-
 	audioMessage := fmt.Sprintf("%s has thrown away a %s. It will go into the %s bin.", name, identified, found)
 	audio, err := textToAudio(audioMessage)
 	if err != nil {
