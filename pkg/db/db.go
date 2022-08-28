@@ -125,3 +125,15 @@ func UserRegister(conn *gorm.DB, user *User) (uint, error) {
 
 	return user.ID, nil
 }
+
+// Get items related to userid
+
+func GetList(conn *gorm.DB, userID uint) ([]Item, error) {
+	items := []Item{}
+	err := conn.
+		Where("user_id = ?", userID).
+		Find(&items).
+		Error
+
+	return items, err
+}

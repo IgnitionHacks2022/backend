@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"os"
 	"time"
 
@@ -26,4 +27,18 @@ func GenerateToken(id uint) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func ValidateToken(token string) (uint, error) {
+	claims := &Claims{}
+	tokenObj, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(JWTSecret), nil
+	})
+	if err != nil {
+		return 0, err
+	}
+	if !tokenObj.Valid {
+		return 0, errors.New("invalid access token")
+	}
+	return claims.UserID, nil
 }
