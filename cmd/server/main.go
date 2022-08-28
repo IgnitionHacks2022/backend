@@ -47,7 +47,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/login", auth.LoginHandler).Methods("POST")
 	router.HandleFunc("/register", auth.RegisterHandler).Methods("POST")
-	router.HandleFunc("/statistics", app.StatisticsHandler).Methods("POST")
+	router.HandleFunc("/statistics", app.StatisticsHandler).Methods("GET")
 	router.HandleFunc("/health-check", healthcheck.Handler)
 	router.HandleFunc("/classify", sorter.ClassifyHandler).Methods("POST")
 	router.Use(logg.LogMiddleware)
