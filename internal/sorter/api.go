@@ -83,8 +83,8 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	found := "Garbage"
-	identified := "Garbage"
+	found := "garbage"
+	identified := "garbage"
 
 	for index, obj := range m.Responses[0].LocalizedObjectAnnotations {
 		if index == 0 {
