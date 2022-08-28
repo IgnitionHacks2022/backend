@@ -10,10 +10,12 @@ import (
 
 	"github.com/joho/godotenv"
 
+	"backend/internal/app"
+	"backend/internal/auth"
 	"backend/internal/healthcheck"
 	"backend/internal/sorter"
 
-	"backend/internal/auth"
+	logg "backend/pkg/log"
 
 	"github.com/gorilla/mux"
 )
@@ -45,8 +47,11 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/login", auth.LoginHandler).Methods("POST")
 	router.HandleFunc("/register", auth.RegisterHandler).Methods("POST")
+	router.HandleFunc("/statistics", app.StatisticsHandler).Methods("POST")
 	router.HandleFunc("/health-check", healthcheck.Handler)
-	router.HandleFunc("/classify", sorter.ClassifyHandler)
+	router.HandleFunc("/classify", sorter.ClassifyHandler).Methods("POST")
+	router.Use(logg.LogMiddleware)
+	router.Use(auth.AuthMiddleware)
 
 	http.Handle("/", router)
 	http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), router)
