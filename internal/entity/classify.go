@@ -1,7 +1,8 @@
 package entity
 
 type Classify struct {
-	Contents string `json:"contents"`
+	Contents    string `json:"contents"`
+	BluetoothID string `json:"bluetoothID"`
 }
 
 type ClassifyResponse struct {

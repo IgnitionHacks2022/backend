@@ -49,8 +49,7 @@ func main() {
 	router.HandleFunc("/register", auth.RegisterHandler).Methods("POST")
 	router.HandleFunc("/statistics", app.StatisticsHandler).Methods("POST")
 	router.HandleFunc("/health-check", healthcheck.Handler)
-	router.HandleFunc("/classify/{userId}", sorter.ClassifyHandler).Methods("POST")
-
+	router.HandleFunc("/classify", sorter.ClassifyHandler).Methods("POST")
 	router.Use(logg.LogMiddleware)
 	router.Use(auth.AuthMiddleware)
 

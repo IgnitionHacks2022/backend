@@ -11,6 +11,7 @@ import (
 
 type LoginResponse struct {
 	Token string `json:"token"`
+	Name  string `json:"name"`
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -34,12 +35,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	name := db.GetUserName(conn, userID)
+
 	token, err := GenerateToken(userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(LoginResponse{Token: token})
+	json.NewEncoder(w).Encode(LoginResponse{Token: token, Name: name})
 }
 
 type RegisterResponse struct {
