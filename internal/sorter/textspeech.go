@@ -14,7 +14,7 @@ func textToAudio(message string) (string, error) {
 	requestPayload := entity.SpeechRequest{
 		AudioConfig: entity.AudioConfig{
 			AudioEncoding: "LINEAR16",
-			Pitch:         7.2,
+			Pitch:         0,//7.2,
 			SpeakingRate:  0.96,
 		},
 		Voice: entity.Voice{
