@@ -10,8 +10,9 @@ import (
 )
 
 type LoginResponse struct {
-	Token string `json:"token"`
-	Name  string `json:"name"`
+	Token       string `json:"token"`
+	Name        string `json:"name"`
+	BluetoothID string `json:"bluetoothID"`
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -36,13 +37,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := db.GetUserName(conn, userID)
-
+	bluetoothID := db.GetBluetoothID(conn, userID)
 	token, err := GenerateToken(userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	json.NewEncoder(w).Encode(LoginResponse{Token: token, Name: name})
+	json.NewEncoder(w).Encode(LoginResponse{Token: token, Name: name, BluetoothID: bluetoothID})
 }
 
 type RegisterResponse struct {

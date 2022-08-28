@@ -75,6 +75,14 @@ func GetUserName(conn *gorm.DB, userId uint) string {
 	return user.Name
 }
 
+// returns user bluetoothID given user id. user id is assumed to be in table.
+
+func GetBluetoothID(conn *gorm.DB, userId uint) string {
+	user := User{}
+	conn.First(&user, userId)
+	return user.BluetoothID
+}
+
 // returns user id on successful auth
 func UserCheckCreds(conn *gorm.DB, email string, password string) (uint, error) {
 
