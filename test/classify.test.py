@@ -7,7 +7,8 @@ url = "http://localhost:8080/register"
 payload = {
   "email": "zhehaizhang3@gmail.com",
   "password": "zhehaizhang",
-  "bluetoothid": "zhehaizhang"
+  "bluetoothid": "zhehaizhang",
+  "name": "zhehai"
 }
 
 res = requests.post(url, json=payload)
