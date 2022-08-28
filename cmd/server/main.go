@@ -46,7 +46,7 @@ func main() {
 	router.HandleFunc("/login", auth.LoginHandler).Methods("POST")
 	router.HandleFunc("/register", auth.RegisterHandler).Methods("POST")
 	router.HandleFunc("/health-check", healthcheck.Handler)
-	router.HandleFunc("/classify/{userId}", sorter.ClassifyHandler)
+	router.HandleFunc("/classify", sorter.ClassifyHandler)
 
 	http.Handle("/", router)
 	http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), router)

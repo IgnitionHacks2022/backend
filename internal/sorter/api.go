@@ -10,13 +10,9 @@ import (
 	"net/http"
 	"os"
 	"strings"
-
-	"github.com/gorilla/mux"
 )
 
 func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	userId := vars["userId"]
 	var requestBody entity.Classify
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
@@ -140,7 +136,25 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	audioMessage := fmt.Sprintf("%s has thrown away a %s. It will go into the %s bin.", "Zhehai", identified, found)
+	name := "You"
+	if requestBody.BluetoothID != "None" {
+		conn, err := db.Connection()
+		uID, err := db.GetUserId(conn, requestBody.BluetoothID)
+		if err != nil {
+			http.Error(w, "Invalid user id", http.StatusNotFound)
+			return
+		}
+		name = db.GetUserName(conn, uID)
+		itemRecord := db.Item{UserID: uID, Type: found, Name: identified}
+		err = db.AddItem(conn, &itemRecord)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		fmt.Println(requestBody.BluetoothID, identified)
+	}
+
+	audioMessage := fmt.Sprintf("%s has thrown away a %s. It will go into the %s bin.", name, identified, found)
 	audio, err := textToAudio(audioMessage)
 	if err != nil {
 		http.Error(w, "Error generating audio message", http.StatusInternalServerError)
@@ -152,20 +166,6 @@ func ClassifyHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-
-	conn, err := db.Connection()
-	uID, err := db.GetUserId(conn, userId)
-	if err != nil {
-		http.Error(w, "Invalid user id", http.StatusNotFound)
-		return
-	}
-	itemRecord := db.Item{UserID: uID, Type: found, Name: identified}
-	err = db.AddItem(conn, &itemRecord)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	fmt.Println(userId, identified)
 
 	w.Write(jsonResponse)
 }

@@ -51,3 +51,8 @@ func textToAudio(message string) (string, error) {
 	return m.AudioContent, nil
 
 }
+
+func createAudioMessage(name string, identified string, found string) (string, error) {
+	audioMessage := fmt.Sprintf("%s has thrown away a %s. It will go into the %s bin.", "Zhehai", identified, found)
+	return textToAudio(audioMessage)
+}
